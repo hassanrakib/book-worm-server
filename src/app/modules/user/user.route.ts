@@ -7,7 +7,7 @@ import auth from "../../middlewares/auth";
 
 const router = express.Router();
 
-router.get("/me", UserControllers.getMe);
+router.get("/me", auth(USER_ROLE.Admin, USER_ROLE.User), UserControllers.getMe);
 
 router.get("/", auth(USER_ROLE.Admin), UserControllers.getUsers);
 

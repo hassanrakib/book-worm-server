@@ -31,6 +31,10 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: [true, "Cover image URL is required"],
     },
+    totalPages: {
+      type: Number,
+      required: [true, "Number of total pages is required"]
+    }
   },
   {
     timestamps: true,

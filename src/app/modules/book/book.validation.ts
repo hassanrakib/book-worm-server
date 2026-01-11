@@ -36,6 +36,13 @@ const bookBodySchema = z.object({
           : "Book description must be a string",
     })
     .trim(),
+
+  totalPages: z.number({
+    error: (iss) =>
+      iss.input === undefined
+        ? "Number of total pages is required"
+        : "Number of total pages must be a string",
+  }),
 });
 
 export const BookValidations = {

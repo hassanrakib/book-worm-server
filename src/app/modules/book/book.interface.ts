@@ -6,4 +6,5 @@ export interface IBook {
     category: Types.ObjectId;
     description: string;
     coverImage: string;
+    totalPages: number;
 }

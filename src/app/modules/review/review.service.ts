@@ -7,7 +7,7 @@ import httpStatus from "http-status";
 
 const insertReviewIntoDB = async (
   user: IRequestUser,
-  payload: Omit<IReview, "user">
+  payload: Omit<IReview, "user" | "status">
 ) => {
   const { userId: reqUserId } = user;
 
@@ -17,7 +17,7 @@ const insertReviewIntoDB = async (
     throw new AppError(httpStatus.NOT_FOUND, "Book not found");
   }
 
-  return await Review.create({ ...payload, user: reqUserId });
+  return await Review.create({ ...payload, user: reqUserId, status: "pending" });
 };
 
 const retrieveReviewsFromDB = async (filter: Record<string, unknown>) => {

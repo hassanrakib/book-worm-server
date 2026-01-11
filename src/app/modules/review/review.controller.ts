@@ -2,7 +2,7 @@ import { IReview, TReviewStatus } from './review.interface';
 import { ReviewServices } from './review.service';
 import { makeController } from '../../utils/controller-factory';
 
-const createReview = makeController<{}, IReview>({
+const createReview = makeController<{}, Omit<IReview, 'user' | 'status'>>({
   service: ({ body, user }) => ReviewServices.insertReviewIntoDB(user, body),
   successMessage: 'Review added successfully',
 });

@@ -1,0 +1,12 @@
+# Node.js-specific files and folders
+node_modules/
+
+# Environment files
+.env
+
+# Editor-specific files
+.vscode/
+
+# Build/Generated files
+dist/
+.vercel

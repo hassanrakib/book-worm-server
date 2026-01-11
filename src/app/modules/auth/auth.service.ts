@@ -6,12 +6,19 @@ import httpStatus from "http-status";
 import { signJwtToken } from "./auth.util";
 import config from "../../config";
 import { SignOptions } from "jsonwebtoken";
+import saveImageToCloud from "../../utils/cloudinary";
 
-const insertUser = async (payload: Omit<IUser, "role">) => {
+const insertUser = async (
+  payload: Omit<IUser, "role" | "profilePhoto">,
+  profilePhoto: Express.Multer.File
+) => {
+  const profilePhotoUrl = await saveImageToCloud(profilePhoto);
+
   // explicitly set the 'role' for enhanced security
   const user = await User.create({
     ...payload,
     role: "user",
+    profilePhoto: profilePhotoUrl,
   });
 
   const userResponse: IUserResponse = {

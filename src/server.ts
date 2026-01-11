@@ -20,7 +20,7 @@ async function main() {
     )}:${encodeURIComponent(
       dbPass
     )}@cluster0.4d9zwtq.mongodb.net/?appName=Cluster0`;
-    await mongoose.connect(dbConnectionUri, { dbName: "techomarko" });
+    await mongoose.connect(dbConnectionUri, { dbName: "book-worm" });
 
     // create server
     server = app.listen(config.port, () => {

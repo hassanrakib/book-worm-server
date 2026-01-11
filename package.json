@@ -7,6 +7,10 @@
   "type": "commonjs",
   "main": "dist/server.js",
   "scripts": {
+    "start": "node dist/server.js",
+    "dev": "tsnd --respawn src/server.ts",
+    "build": "tsc",
+    "seed:superadmin": "tsnd src/app/scripts/createSuperAdmin.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

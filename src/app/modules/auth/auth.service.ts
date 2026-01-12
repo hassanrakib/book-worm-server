@@ -51,7 +51,7 @@ const loginUser = async (payload: ILoginCredentials) => {
   }
 
   if (!(await user.isPasswordMatch(plainTextPassword))) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid username or password");
+    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
   }
 
   // create a jwt token

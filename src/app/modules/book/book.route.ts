@@ -15,9 +15,15 @@ router.get(
 );
 
 router.get(
-  "/",
+  "/recommended",
   auth(USER_ROLE.Admin, USER_ROLE.User),
   BookControllers.getRecommendedBooksForUser
+);
+
+router.get(
+  "/:id",
+  auth(USER_ROLE.Admin, USER_ROLE.User),
+  BookControllers.getBookById
 );
 
 router.post(

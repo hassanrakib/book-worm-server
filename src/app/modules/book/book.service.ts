@@ -70,6 +70,10 @@ const retrieveBooksFromDB = async (query: IBookQuery) => {
   };
 };
 
+const retreiveBookByIdFromDB = async (bookId: string) => {
+  return await Book.findById(bookId);
+}
+
 const updateBookByIdIntoDB = async (
   id: string,
   update: Partial<IBook>,
@@ -284,6 +288,7 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
 export const BookServices = {
   insertBookIntoDB,
   retrieveBooksFromDB,
+  retreiveBookByIdFromDB,
   updateBookByIdIntoDB,
   deleteBookByIdFromDB,
   getRecommendedBooksForUser,

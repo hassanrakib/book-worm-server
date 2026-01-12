@@ -18,6 +18,14 @@ const getBooks = makeController<{}, {}, IBookQuery>({
   successMessage: "Books data retrieved successfully.",
 });
 
+const getBookById = makeController<{ id: string }>({
+  service: ({ params }) => BookServices.retreiveBookByIdFromDB(params.id),
+  successMessage: "Book retrieved successfully.",
+  notFound: {
+    message: "Book is not found",
+  },
+});
+
 const updateBookById = makeController<
   { id: string },
   Partial<IBook>,
@@ -49,6 +57,7 @@ const getRecommendedBooksForUser = makeController({
 export const BookControllers = {
   createBook,
   getBooks,
+  getBookById
   updateBookById,
   deleteBookById,
   getRecommendedBooksForUser,

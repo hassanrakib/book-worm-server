@@ -38,7 +38,6 @@ const auth = (...userRoles: TUserRole[]) => {
     const requestUser: IRequestUser = {
       ...decoded,
       email: user.email,
-      role: user.role,
     };
 
     req.user = requestUser;

@@ -3,7 +3,6 @@ import { IUser } from "../modules/user/user.interface";
 
 export interface IRequestUser extends TJwtPayload {
   email: IUser["email"];
-  role: IUser["role"];
 }
 
 // The global object in Node.js is a special object like window in browsers.

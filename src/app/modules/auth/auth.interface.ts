@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import { TUserRole } from "../user/user.interface";
 
 export interface ILoginCredentials {
   email: string;
@@ -7,6 +8,7 @@ export interface ILoginCredentials {
 
 export interface ITokenSignPayload {
   userId: string;
+  role: TUserRole;
 }
 
 export type TJwtPayload = ITokenSignPayload & JwtPayload;

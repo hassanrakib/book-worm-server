@@ -12,10 +12,9 @@ const insertUser = async (
   payload: Omit<IUser, "role" | "profilePhoto">,
   profilePhoto: Express.Multer.File
 ) => {
+  console.log("Payload", payload);
 
-  console.log('Payload', payload);
-
-  console.log('Profile Photo', profilePhoto);
+  console.log("Profile Photo", profilePhoto);
 
   const profilePhotoUrl = await saveImageToCloud(profilePhoto);
 
@@ -52,7 +51,10 @@ const loginUser = async (payload: ILoginCredentials) => {
   }
 
   // create a jwt token
-  const tokenSignPayload: ITokenSignPayload = { userId: String(user._id) };
+  const tokenSignPayload: ITokenSignPayload = {
+    userId: String(user._id),
+    role: user.role,
+  };
   const jwtToken = await signJwtToken(
     tokenSignPayload,
     config.jwt_expires_in as SignOptions["expiresIn"]

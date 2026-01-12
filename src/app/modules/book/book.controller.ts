@@ -57,7 +57,7 @@ const getRecommendedBooksForUser = makeController({
 export const BookControllers = {
   createBook,
   getBooks,
-  getBookById
+  getBookById,
   updateBookById,
   deleteBookById,
   getRecommendedBooksForUser,

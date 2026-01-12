@@ -14,23 +14,37 @@ const addBookToShelf = async (
 
   // check if book exists
   const book = await Book.findById(payload.book);
-
   if (!book) {
     throw new AppError(httpStatus.NOT_FOUND, "Book is not found");
   }
 
-  // check if book is already in any shelf or not
-  const bookInShelf = await Shelf.findOne(payload.book);
+  // check if book already exists in user's shelf
+  const bookInShelf = await Shelf.findOne({
+    book: payload.book,
+    user: reqUserId,
+  });
 
   if (bookInShelf) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Book is already in a shelf");
+    throw new AppError(httpStatus.BAD_REQUEST, "Book is already in your shelf");
   }
 
-  return await Shelf.create({
-    ...payload,
+  // create shelf entry
+  const shelf = await Shelf.create({
+    book: payload.book,
     user: reqUserId,
     shelf: "want_to_read",
   });
+
+  try {
+    // increment shelfCount
+    await Book.findByIdAndUpdate(payload.book, {
+      $inc: { shelfCount: 1 },
+    });
+  } catch (err) {
+    console.log("update book shelfCount error", err);
+  }
+
+  return shelf;
 };
 
 const getBooksOfShelvesByUser = async (user: IRequestUser) => {

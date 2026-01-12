@@ -12,9 +12,13 @@ const insertUser = async (
   payload: Omit<IUser, "role" | "profilePhoto">,
   profilePhoto: Express.Multer.File
 ) => {
-  console.log("Payload", payload);
 
-  console.log("Profile Photo", profilePhoto);
+  // check if user exists
+  const userInDB = await User.getUserByEmail(payload.email);
+
+  if(userInDB) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Email is already used');
+  }
 
   const profilePhotoUrl = await saveImageToCloud(profilePhoto);
 

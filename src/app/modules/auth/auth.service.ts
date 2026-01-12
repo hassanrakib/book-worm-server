@@ -12,6 +12,11 @@ const insertUser = async (
   payload: Omit<IUser, "role" | "profilePhoto">,
   profilePhoto: Express.Multer.File
 ) => {
+
+  console.log('Payload', payload);
+
+  console.log('Profile Photo', profilePhoto);
+
   const profilePhotoUrl = await saveImageToCloud(profilePhoto);
 
   // explicitly set the 'role' for enhanced security

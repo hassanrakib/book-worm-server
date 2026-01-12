@@ -38,7 +38,8 @@ const saveImageToCloud = async (file: Express.Multer.File) => {
     });
     return secure_url;
   } catch (err: unknown) {
-    throw new AppError(httpStatus.BAD_REQUEST, (err as Error).message);
+    console.log('Error file upload to cloudinary', err);
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, (err as Error).message);
   }
 };
 

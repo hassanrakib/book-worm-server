@@ -1,4 +1,4 @@
-import { FilterQuery, Query } from "mongoose";
+import { Query } from "mongoose";
 
 export interface QueryParams {
   searchTerm?: string;
@@ -42,7 +42,7 @@ export default class QueryBuilder<T, Q extends QueryParams> {
               $regex: searchTerm,
               $options: "i",
             },
-          } as FilterQuery<T>)
+          })
       ),
     });
 
@@ -53,7 +53,7 @@ export default class QueryBuilder<T, Q extends QueryParams> {
     const filter = { ...this.query };
     this.getExcludedFields().forEach((field) => delete filter[field]);
 
-    this.modelQuery = this.modelQuery.find(filter as FilterQuery<T>);
+    this.modelQuery = this.modelQuery.find(filter);
 
     return this;
   }

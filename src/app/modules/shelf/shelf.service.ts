@@ -1,7 +1,7 @@
 import AppError from "../../errors/app-error";
 import { IRequestUser } from "../../interfaces";
+import { IBook } from "../book/book.interface";
 import { Book } from "../book/book.model";
-import { SHELF_TYPE } from "./shelf.constant";
 import { IShelf, TShelfType } from "./shelf.interface";
 import { Shelf } from "./shelf.model";
 import httpStatus from "http-status";
@@ -67,19 +67,64 @@ const updateBookShelfById = async (
   shelfId: string,
   shelfUpdate: { shelf?: TShelfType; pagesRead?: number }
 ) => {
-  const update = { ...shelfUpdate };
-
   const shelf = await Shelf.findById(shelfId).populate("book").lean();
 
   if (!shelf) {
     throw new AppError(httpStatus.NOT_FOUND, "Book shelf is not found");
   }
 
-  if (shelfUpdate.shelf === SHELF_TYPE.CurrentlyReading) {
-    update.pagesRead = 0;
+  const update: { shelf?: TShelfType; pagesRead?: number } = {};
+
+  const isShelfChanging = Boolean(shelfUpdate.shelf);
+
+  /**
+   * Shelf type update
+   */
+  if (shelfUpdate.shelf) {
+    update.shelf = shelfUpdate.shelf;
+
+    if (shelfUpdate.shelf === "currently_reading") {
+      update.pagesRead = 0;
+    } else {
+      update.pagesRead = undefined;
+    }
   }
 
-  return await Shelf.findByIdAndUpdate(shelfId, update);
+  /**
+   * Pages read update
+   */
+  if (
+    typeof shelfUpdate.pagesRead === "number" &&
+    !isShelfChanging // prevent conflict
+  ) {
+    if (shelf.shelf !== "currently_reading") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Pages read can only be updated for currently reading books"
+      );
+    }
+
+    if (shelfUpdate.pagesRead < 0) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Pages read cannot be negative"
+      );
+    }
+
+    const totalPages = (shelf.book as any)?.totalPages;
+
+    if (totalPages && shelfUpdate.pagesRead >= totalPages) {
+      update.pagesRead = undefined;
+      update.shelf = "read";
+    } else {
+      update.pagesRead = shelfUpdate.pagesRead;
+    }
+  }
+
+  return await Shelf.findByIdAndUpdate(shelfId, update, {
+    new: true,
+    runValidators: true,
+  });
 };
 
 export const ShelfServices = {

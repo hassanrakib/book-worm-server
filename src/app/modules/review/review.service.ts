@@ -76,12 +76,14 @@ const updateReviewStatusById = async (
           $group: {
             _id: "$book",
             avgRating: { $avg: "$rating" },
+            reviewCount: { $sum: 1 },
           },
         },
       ]);
 
       await Book.findByIdAndUpdate(bookId, {
         avgRating: stats[0]?.avgRating || 0,
+        reviewCount: stats[0]?.reviewCount || 0,
       });
     }
   } catch (error) {

@@ -9,6 +9,7 @@ export interface IBook {
   coverImage: string;
   totalPages: number;
   avgRating: number;
+  reviewCount: number;
   shelfCount: number;
 }
 

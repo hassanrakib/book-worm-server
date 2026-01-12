@@ -39,6 +39,10 @@ const bookSchema = new Schema<IBook>(
       type: Number,
       default: 0,
     },
+    reviewCount: {
+      type: Number,
+      default: 0,
+    },
     shelfCount: {
       type: Number,
       default: 0,

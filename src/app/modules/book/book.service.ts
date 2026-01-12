@@ -1,9 +1,12 @@
+import mongoose from "mongoose";
 import AppError from "../../errors/app-error";
 import saveImageToCloud from "../../utils/cloudinary";
 import { Category } from "../category/category.model";
 import { IBook } from "./book.interface";
 import { Book } from "./book.model";
 import httpStatus from "http-status";
+import { Review } from "../review/review.model";
+import { Shelf } from "../shelf/shelf.model";
 
 const insertBookIntoDB = async (
   payload: Omit<IBook, "coverImage">,
@@ -65,7 +68,28 @@ const updateBookByIdIntoDB = async (
 };
 
 const deleteBookByIdFromDB = async (id: string) => {
-  return await Book.findByIdAndDelete(id).lean();
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const book = await Book.findByIdAndDelete(id, { session }).lean();
+
+    if (!book) {
+      throw new AppError(httpStatus.NOT_FOUND, "Book not found");
+    }
+
+    await Review.deleteMany({ book: id }, { session });
+    await Shelf.deleteMany({ book: id }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return book;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 export const BookServices = {

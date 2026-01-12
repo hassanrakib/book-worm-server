@@ -65,9 +65,14 @@ const getBooksOfShelvesByUser = async (user: IRequestUser) => {
 
 const updateBookShelfById = async (
   shelfId: string,
+  user: IRequestUser,
   shelfUpdate: { shelf?: TShelfType; pagesRead?: number }
 ) => {
-  const shelf = await Shelf.findById(shelfId).populate("book").lean();
+  const { userId: reqUserId } = user;
+
+  const shelf = await Shelf.findOne({ _id: shelfId, user: reqUserId })
+    .populate("book")
+    .lean();
 
   if (!shelf) {
     throw new AppError(httpStatus.NOT_FOUND, "Book shelf is not found");

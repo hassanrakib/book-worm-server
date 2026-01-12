@@ -14,6 +14,12 @@ router.get(
   BookControllers.getBooks
 );
 
+router.get(
+  "/",
+  auth(USER_ROLE.Admin, USER_ROLE.User),
+  BookControllers.getRecommendedBooksForUser
+);
+
 router.post(
   "/",
   auth(USER_ROLE.Admin),

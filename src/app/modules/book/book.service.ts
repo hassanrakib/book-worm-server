@@ -2,11 +2,12 @@ import mongoose from "mongoose";
 import AppError from "../../errors/app-error";
 import saveImageToCloud from "../../utils/cloudinary";
 import { Category } from "../category/category.model";
-import { IBook } from "./book.interface";
+import { IBook, IBookQuery } from "./book.interface";
 import { Book } from "./book.model";
 import httpStatus from "http-status";
 import { Review } from "../review/review.model";
 import { Shelf } from "../shelf/shelf.model";
+import QueryBuilder, { QueryParams } from "../../builder/query-builder";
 
 const insertBookIntoDB = async (
   payload: Omit<IBook, "coverImage">,
@@ -30,8 +31,42 @@ const insertBookIntoDB = async (
   return result;
 };
 
-const retrieveBooksFromDB = async () => {
-  return await Book.find().lean();
+const retrieveBooksFromDB = async (query: IBookQuery) => {
+  const qb = new QueryBuilder(Book.find(), query).search(["title", "author"]);
+
+  /**
+   * ?category=id1,id2
+   */
+  if (query.category) {
+    qb.modelQuery = qb.modelQuery.find({
+      category: {
+        $in: query.category.split(","),
+      },
+    });
+  }
+
+  /**
+   * ?minRating=3&maxRating=5
+   */
+  if (query.minRating || query.maxRating) {
+    qb.modelQuery = qb.modelQuery.find({
+      avgRating: {
+        ...(query.minRating && { $gte: Number(query.minRating) }),
+        ...(query.maxRating && { $lte: Number(query.maxRating) }),
+      },
+    });
+  }
+
+  qb.sort().selectFields().paginate();
+
+  const books = await qb.modelQuery.lean();
+
+  const pagination = await qb.getPaginationInformation();
+
+  return {
+    result: books,
+    meta: pagination,
+  };
 };
 
 const updateBookByIdIntoDB = async (

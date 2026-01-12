@@ -9,12 +9,12 @@ export interface QueryParams {
   [key: string]: unknown;
 }
 
-export default class QueryBuilder<T> {
+export default class QueryBuilder<T, Q extends QueryParams> {
   // modelQuery<ResultType, DocType> mongoose query object
   public modelQuery: Query<T[], T>;
-  public query: QueryParams;
+  public query: Q;
 
-  constructor(modelQuery: Query<T[], T>, query: QueryParams) {
+  constructor(modelQuery: Query<T[], T>, query: Q) {
     this.modelQuery = modelQuery;
     this.query = query;
   }

@@ -33,8 +33,16 @@ const bookSchema = new Schema<IBook>(
     },
     totalPages: {
       type: Number,
-      required: [true, "Number of total pages is required"]
-    }
+      required: [true, "Number of total pages is required"],
+    },
+    avgRating: {
+      type: Number,
+      default: 0,
+    },
+    shelfCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

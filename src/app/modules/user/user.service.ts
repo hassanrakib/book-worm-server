@@ -58,11 +58,10 @@ const updateUserRoleByIdIntoDB = async (
     );
   }
 
-  const filter: Record<string, any> = {
-    _id: new Types.ObjectId(targetUserId),
-  };
-
-  const user = await User.findOneAndUpdate(filter, roleUpdate);
+  const user = await User.findByIdAndUpdate(targetUserId, roleUpdate, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!user) return user;
 

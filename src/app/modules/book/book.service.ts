@@ -62,12 +62,7 @@ const retrieveBooksFromDB = async (query: IBookQuery) => {
 
   const books = await qb.modelQuery.lean();
 
-  const pagination = await qb.getPaginationInformation();
-
-  return {
-    result: books,
-    meta: pagination,
-  };
+  return books;
 };
 
 const retreiveBookByIdFromDB = async (bookId: string) => {

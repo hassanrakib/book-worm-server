@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get(
     '/',
-    auth(USER_ROLE.Admin),
+    auth(USER_ROLE.Admin, USER_ROLE.User),
     CategoryControllers.getCategories
 );
 

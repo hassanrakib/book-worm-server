@@ -58,7 +58,7 @@ const retrieveBooksFromDB = async (query: IBookQuery) => {
     });
   }
 
-  qb.sort().selectFields().paginate();
+  qb.sort().selectFields();
 
   const books = await qb.modelQuery.populate("category").lean();
 

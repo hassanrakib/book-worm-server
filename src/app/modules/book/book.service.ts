@@ -27,7 +27,7 @@ const insertBookIntoDB = async (
       ...payload,
       coverImage: coverImageUrl,
     })
-  ).toObject();
+  ).populate("category");
 
   return result;
 };
@@ -60,14 +60,14 @@ const retrieveBooksFromDB = async (query: IBookQuery) => {
 
   qb.sort().selectFields().paginate();
 
-  const books = await qb.modelQuery.lean();
+  const books = await qb.modelQuery.populate("category").lean();
 
   return books;
 };
 
 const retreiveBookByIdFromDB = async (bookId: string) => {
-  return await Book.findById(bookId);
-}
+  return await Book.findById(bookId).populate('category');
+};
 
 const updateBookByIdIntoDB = async (
   id: string,
@@ -97,7 +97,7 @@ const updateBookByIdIntoDB = async (
   const result = await Book.findByIdAndUpdate(id, bookUpdate, {
     new: true,
     runValidators: true,
-  }).lean();
+  }).populate('category').lean();
 
   return result;
 };

@@ -1,31 +1,26 @@
 import { ICategory } from "./category.interface";
 import { Category } from "./category.model";
 
-
 const insertCategoryIntoDB = async (payload: ICategory) => {
-    return await Category.create(payload);
+  return await Category.create(payload);
 };
 
 const retrieveCategoriesFromDB = async () => {
-    return await Category.find();
+  return await Category.find().sort({ createdAt: -1 });
 };
 
 const updateCategoryByIdIntoDB = async (
-    id: string,
-    update: Partial<ICategory>
+  id: string,
+  update: Partial<ICategory>
 ) => {
-    return await Category.findByIdAndUpdate(
-        id,
-        update,
-        {
-            new: true,
-            runValidators: true,
-        }
-    );
+  return await Category.findByIdAndUpdate(id, update, {
+    new: true,
+    runValidators: true,
+  });
 };
 
 export const CategoryServices = {
-    insertCategoryIntoDB,
-    retrieveCategoriesFromDB,
-    updateCategoryByIdIntoDB,  
+  insertCategoryIntoDB,
+  retrieveCategoriesFromDB,
+  updateCategoryByIdIntoDB,
 };

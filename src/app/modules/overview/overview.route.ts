@@ -11,4 +11,10 @@ router.get(
   OverviewControllers.getAdminDashboardOverview
 );
 
+router.get(
+  "/user",
+  auth(USER_ROLE.User),
+  OverviewControllers.getUserDashboardOverview
+);
+
 export const OverviewRoutes = router;

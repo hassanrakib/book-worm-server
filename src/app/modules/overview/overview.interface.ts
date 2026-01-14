@@ -3,3 +3,10 @@ export interface IAdminOverview {
   totalUsers: number;
   pendingReviewsCount: number;
 }
+
+export interface IUserOverview {
+  totalBooksInShelves: number;
+  totalBooksRead: number;
+  totalPagesRead: number;
+  averageRatingGiven: number;
+}

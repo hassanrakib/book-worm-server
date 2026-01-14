@@ -16,6 +16,9 @@ const getAdminDashboardOverview = async () => {
   };
 };
 
+const getUserDashboardOverview = async () => {};
+
 export const OverviewServices = {
   getAdminDashboardOverview,
+  getUserDashboardOverview,
 };

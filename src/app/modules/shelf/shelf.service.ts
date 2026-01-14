@@ -50,7 +50,9 @@ const addBookToShelf = async (
 const getBooksOfShelvesByUser = async (user: IRequestUser) => {
   const { userId: reqUserId } = user;
 
-  const result = await Shelf.find({ user: reqUserId }).lean();
+  const result = await Shelf.find({ user: reqUserId })
+    .lean()
+    .populate(["book", "user"]);
 
   // Group the results by the shelf type
   const groupedShelves = result.reduce(

@@ -6,6 +6,7 @@ import { BookRoutes } from '../modules/book/book.route';
 import { ReviewRoutes } from '../modules/review/review.route';
 import { ShelfRoutes } from '../modules/shelf/shelf.route';
 import { OverviewRoutes } from '../modules/overview/overview.route';
+import { TutorialRoutes } from '../modules/tutorial/tutorial.route';
 
 // it's a mini application also a route handler itself
 // every http request to '/api/v1' will be handled by this router
@@ -40,6 +41,10 @@ const routes = [
         path: "/overview",
         handler: OverviewRoutes,
     },
+    {
+        path: "/tutorials",
+        handler: TutorialRoutes,
+    }
 ];
 
 routes.forEach((route) => router.use(route.path, route.handler));

@@ -66,7 +66,7 @@ const retrieveBooksFromDB = async (query: IBookQuery) => {
 };
 
 const retreiveBookByIdFromDB = async (bookId: string) => {
-  return await Book.findById(bookId).populate('category');
+  return await Book.findById(bookId).populate("category");
 };
 
 const updateBookByIdIntoDB = async (
@@ -97,7 +97,9 @@ const updateBookByIdIntoDB = async (
   const result = await Book.findByIdAndUpdate(id, bookUpdate, {
     new: true,
     runValidators: true,
-  }).populate('category').lean();
+  })
+    .populate("category")
+    .lean();
 
   return result;
 };
@@ -130,16 +132,18 @@ const deleteBookByIdFromDB = async (id: string) => {
 export const getRecommendedBooksForUser = async (user: IRequestUser) => {
   const { userId } = user;
 
-  // 1️. Fetch read books
+  // 1️. Fetch read books (Internal logic uses IDs)
   const readShelves = await Shelf.find({
     user: userId,
     shelf: "read",
   }).populate("book");
+  
   const readBookIds = readShelves.map((s) => s.book._id.toString());
 
   // 2️. Fallback for <3 read books
   if (readShelves.length < 3) {
     const popularBooks = await Book.find()
+      .populate("category") // Populated for result
       .sort({ avgRating: -1, shelfCount: -1 })
       .limit(10);
 
@@ -150,6 +154,16 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
         },
       },
       { $sample: { size: 6 } },
+      // Populate category for aggregate result
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
     ]);
 
     const map = new Map();
@@ -157,7 +171,6 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
       map.set(b._id.toString(), b)
     );
 
-    // Ensure at least 12 books for fallback
     const finalFallback = Array.from(map.values());
     if (finalFallback.length < 12) {
       const extraBooks = await Book.find({
@@ -168,6 +181,7 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
           ].map((id) => new Types.ObjectId(id)),
         },
       })
+        .populate("category") // Populated for result
         .sort({ avgRating: -1, shelfCount: -1 })
         .limit(12 - finalFallback.length);
 
@@ -180,7 +194,7 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
   // 3️. Compute top categories
   const categoryCount: Record<string, number> = {};
   readShelves.forEach((shelf) => {
-    const catId = (shelf.book as unknown as IBook).category.toString();
+    const catId = (shelf.book as any).category.toString();
     categoryCount[catId] = (categoryCount[catId] || 0) + 1;
   });
 
@@ -207,9 +221,19 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
       },
     },
     { $unwind: "$book" },
+    // Populate category here for the final return
+    {
+      $lookup: {
+        from: "categories",
+        localField: "book.category",
+        foreignField: "_id",
+        as: "book.category",
+      },
+    },
+    { $unwind: "$book.category" },
     {
       $match: {
-        "book.category": {
+        "book.category._id": {
           $in: topCategories.map((id) => new Types.ObjectId(id)),
         },
       },
@@ -251,6 +275,16 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
       },
     },
     { $sample: { size: 5 } },
+    // Populate category for aggregate result
+    {
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "category",
+      },
+    },
+    { $unwind: "$category" },
   ]);
 
   // 8️. Merge and remove duplicates
@@ -269,6 +303,7 @@ export const getRecommendedBooksForUser = async (user: IRequestUser) => {
         ),
       },
     })
+      .populate("category") // Populated for result
       .sort({ avgRating: -1, shelfCount: -1 })
       .limit(12 - finalBooks.length);
 

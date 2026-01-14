@@ -8,5 +8,6 @@ export interface IUserOverview {
   totalBooksInShelves: number;
   totalBooksRead: number;
   totalPagesRead: number;
+  totalReviewsGiven: number;
   averageRatingGiven: number;
 }

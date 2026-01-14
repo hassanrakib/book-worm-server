@@ -7,7 +7,7 @@ const getAdminDashboardOverview = makeController({
 });
 
 const getUserDashboardOverview = makeController({
-  service: () => OverviewServices.getUserDashboardOverview(),
+  service: ({ user }) => OverviewServices.getUserDashboardOverview(user),
   successMessage: 'User dashboard overview retrieved',
 });
 

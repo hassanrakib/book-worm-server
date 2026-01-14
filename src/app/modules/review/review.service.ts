@@ -26,7 +26,7 @@ const insertReviewIntoDB = async (
 };
 
 const retrieveReviewsFromDB = async (filter: Record<string, unknown>) => {
-  return await Review.find(filter);
+  return await Review.find(filter).populate(["user", "book"]);
 };
 
 const retrieveApprovedReviewsByBookId = async (bookId: string) => {
@@ -37,7 +37,9 @@ const retrieveApprovedReviewsByBookId = async (bookId: string) => {
   }
 
   const filter = { book: bookId, status: "approved" };
-  return await Review.find(filter);
+  return await Review.find(filter)
+    .populate(["user", "book"])
+    .sort({ updatedAt: -1 });
 };
 
 const updateReviewStatusById = async (

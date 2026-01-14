@@ -6,7 +6,7 @@ const addTutorialVideo = async (payload: ITutorial) => {
 };
 
 const getTutorials = async () => {
-  return await Tutorial.find();
+  return await Tutorial.find().sort({ createdAt: - 1});
 };
 
 export const TutorialServices = {
